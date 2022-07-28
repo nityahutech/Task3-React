@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import SignImg from "./SignImg";
+import SignImg from './SignImg';
 import {NavLink} from 'react-router-dom'
 
-function Home() {
+const Login = () => {
+
     const [inpval, setInpval] = useState({
-        name:"",
+        
         email:"",
         password:""
     })
@@ -31,38 +32,43 @@ function Home() {
     const addData = (e)=>{
         e.preventDefault();
         // console.log(inpval)
-        const {name,email,password} = inpval;
+        const getuserArr = localStorage.getItem("userData");
+        console.log(getuserArr);
 
-        if(name === ""){
-            alert("Please Enter Your FullName")
-        }
-        else if(email === ""){
+        const {email,password} = inpval;
+
+        if(email === ""){
             alert("Please Enter Your Email")
         }else if(!email.includes("@")){
             alert("Please enter Valid Email Address")
         }else if(password === ""){
             alert("Please Enter a Password")
         }else if(password.length < 4){
-            alert("Password Must be 4 characters")
+            alert("Incorrect Password")
         }else{
-            alert("Data Added successfully")
-
-            localStorage.setItem("userData", JSON.stringify([...data,inpval]));
+            if(getuserArr && getuserArr.length){
+                const userdataDetails = JSON.parse(getuserArr)
+                const userlogin = userdataDetails.filter((el,k) =>{
+                    return el.email === email && el.password === password
+                });
+                // console.log(userlogin);
+                if(userlogin.length === 0){
+                    alert ("Invalid Details");
+                }else{
+                    console.log("User Login Successfully");
+                }
+            }
         }
     }
 
   return (
     <>
-      <div className="container mt-3">
+        <div className="container mt-3">
         <section className="d-flex justify-content-between ">
           <div className="left_data p-4" style={{ width: "100%" }}>
-            <h3 className="text-center col-lg-6">Sign Up</h3>
+            <h3 className="text-center col-lg-6">Sign In</h3>
             <Form>
-              <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
-                <Form.Label>Full Name</Form.Label>
-                <Form.Control type="text" name='name' onChange={getdata} placeholder="Enter your name" />
-              </Form.Group>
-
+              
               <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
                 <Form.Label>Email</Form.Label>
                 {/* pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 4}$" */}
@@ -88,13 +94,13 @@ function Home() {
                 Submit
               </Button>
             </Form>
-            <p className="mt-3">Already have an Account <span><NavLink to={'/login'}>SignIn</NavLink></span></p>
+            <p className="mt-3">Already have an Account <span><NavLink to={'/signup'}>SignUp</NavLink></span></p>
           </div>
           <SignImg></SignImg>
         </section>
       </div>
     </>
-  );
+  )
 }
 
-export default Home;
+export default Login
